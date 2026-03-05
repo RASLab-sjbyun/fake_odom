@@ -82,3 +82,101 @@ gedit setup.py
   )
 
   ```
+
+# 2. PointCloude to LaserScan
+## 2.1 Package Install 
+  ```bash
+  sudo apt install ros-humble-velodyne-laserscan
+  ```
+## 2.2 excute Package 
+  ```bash
+  ros2 run velodyne_laserscan velodyne_laserscan_node  --ros-args  -r cloud:=/velodyne_points -r scan:=/scan
+  ```
+
+# 3. Navigation Package Install
+## 3.1 Package Install 
+  ```bash
+  sudo apt install ros-humble-bondcpp
+  sudo apt install libsuitesparse-dev
+  sudo apt install ros-humble-navigation2
+  sudo apt install ros-humble-nav2-bringup
+  ```
+
+# 4. SLAM Package Install
+## 4.1 Package Install 
+  ```bash
+  cd ~/go2_sim_ws/src/
+  git clone -b humble https://github.com/SteveMacenski/slam_toolbox.git
+  cd ~/go2_sim_ws
+  colcon build
+  ```
+
+# 5. Gazebo SLAM
+## Terminal 1 
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 launch go2_config gazebo_velodyne.launch.py rviz:=true
+  ```
+## Terminal 2 
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 run fake_odom odom_tf_broadcaster
+  ```
+## Terminal 3
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 run fake_odom odom_local_publisher
+  ```
+## Terminal 4
+  ```bash
+  ros2 run velodyne_laserscan velodyne_laserscan_node  --ros-args   -r cloud:=/velodyne_points -r scan:=/scan
+  ```
+## Terminal 5
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 launch slam_toolbox online_async_launch.py
+  ```
+## Terminal 6
+  ```bash
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard
+  ```
+## Terminal 7
+  ```bash
+  ros2 run nav2_map_server map_saver_cli -f ~/map
+  ```
+
+# 6. Gazebo Navigation
+## Terminal 1 
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 launch go2_config gazebo_velodyne.launch.py rviz:=true
+  ```
+## Terminal 2 
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 run fake_odom odom_tf_broadcaster
+  ```
+## Terminal 3
+  ```bash
+  cd ~/go2_sim_ws/
+  source install/setup.bash
+  ros2 run fake_odom odom_local_publisher
+  ```
+## Terminal 4
+  ```bash
+  ros2 run velodyne_laserscan velodyne_laserscan_node  --ros-args   -r cloud:=/velodyne_points -r scan:=/scan
+  ```
+## Terminal 5
+  ```bash
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard
+  ```
+## Terminal 6
+  ```bash
+  ros2 launch nav2_bringup bringup_launch.py use_sim_time:=true map:=/home/lab/map.yaml
+  ```
